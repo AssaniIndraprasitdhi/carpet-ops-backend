@@ -20,6 +20,17 @@ builder.Services.AddScoped<DataSyncService>();
 builder.Services.AddScoped<LayoutCalculationService>();
 builder.Services.AddScoped<AreaCalculationService>();
 builder.Services.AddScoped<FabricPieceService>();
+builder.Services.AddScoped<PlanService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 
@@ -44,13 +55,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PostgresContext>();
-    try
-    {
-        await context.Database.EnsureCreatedAsync();
-    }
-    catch
-    {
-    }
+    await context.Database.EnsureCreatedAsync();
 }
 
 if (app.Environment.IsDevelopment())
@@ -60,6 +65,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseCors("DevCors");
 app.MapControllers();
 
 Console.WriteLine($"Carpet Ops System starting on port {settings.Port}...");

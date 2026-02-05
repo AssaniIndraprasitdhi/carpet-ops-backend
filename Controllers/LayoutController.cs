@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarpetOpsSystem.Data;
+using CarpetOpsSystem.DTOs;
 using CarpetOpsSystem.Models;
 using CarpetOpsSystem.Services;
 
@@ -12,15 +13,18 @@ public class LayoutController : ControllerBase
 {
     private readonly LayoutCalculationService _layoutService;
     private readonly AreaCalculationService _areaService;
+    private readonly PlanService _planService;
     private readonly PostgresContext _context;
 
     public LayoutController(
         LayoutCalculationService layoutService,
         AreaCalculationService areaService,
+        PlanService planService,
         PostgresContext context)
     {
         _layoutService = layoutService;
         _areaService = areaService;
+        _planService = planService;
         _context = context;
     }
 
@@ -134,6 +138,56 @@ public class LayoutController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("options")]
+    public async Task<ActionResult<List<LayoutOptionResponse>>> GenerateOptions([FromBody] GenerateLayoutOptionsRequest request)
+    {
+        if (request.BarcodeNos == null || !request.BarcodeNos.Any())
+        {
+            return BadRequest("BarcodeNos is required");
+        }
+
+        if (request.TotalWidth <= 0)
+        {
+            return BadRequest("TotalWidth must be greater than 0");
+        }
+
+        try
+        {
+            var options = await _layoutService.GenerateOptionsAsync(request);
+            return Ok(options);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("preview")]
+    public async Task<ActionResult<LayoutPreviewResponse>> Preview([FromBody] LayoutPreviewRequest request)
+    {
+        try
+        {
+            var preview = await _planService.GeneratePreviewAsync(request);
+            return Ok(preview);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
         }
         catch (Exception ex)
         {

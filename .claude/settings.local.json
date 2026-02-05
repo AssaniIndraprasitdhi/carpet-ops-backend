@@ -1,8 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(tree:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet ef migrations add:*)"
     ]
   }
 }
