@@ -17,27 +17,28 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<OrderDto>>> GetOrders([FromQuery] string? cnvId)
+    public async Task<ActionResult<List<OrderDto>>> GetOrders([FromQuery] int? cnvId)
     {
-        if (string.IsNullOrWhiteSpace(cnvId))
+        if (!cnvId.HasValue)
         {
             return BadRequest("cnvId is required");
         }
 
-        var plannedOrders = await _context.PlanOrders
-            .Where(po => po.CnvId == cnvId)
+        var cnvIdStr = cnvId.Value.ToString();
+
+        var plannedOrderNos = await _context.PlanOrders
+            .Where(po => po.CnvId == cnvId.Value)
             .Select(po => po.OrderNo)
             .ToListAsync();
 
         var orders = await _context.FabricPieces
-            .Where(f => f.CnvId == cnvId && !plannedOrders.Contains(f.OrderNo))
-            .GroupBy(f => new { f.OrderNo, f.OrderType, f.CnvId, f.CnvDesc })
+            .Where(f => f.CnvId == cnvIdStr && !plannedOrderNos.Contains(f.OrderNo))
+            .GroupBy(f => new { f.OrderNo, f.OrderType })
             .Select(g => new OrderDto
             {
                 OrderNo = g.Key.OrderNo,
                 OrderType = g.Key.OrderType,
-                CnvId = g.Key.CnvId,
-                CnvDesc = g.Key.CnvDesc,
+                CnvId = cnvId.Value,
                 PieceCount = g.Count(),
                 TotalAreaSqm = g.Sum(f => f.Sqm)
             })

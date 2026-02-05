@@ -13,10 +13,8 @@ public class PlanOrder
     [Column("plan_id")]
     public int PlanId { get; set; }
 
-    [Required]
     [Column("cnv_id")]
-    [MaxLength(50)]
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
 
     [Required]
     [Column("order_no")]

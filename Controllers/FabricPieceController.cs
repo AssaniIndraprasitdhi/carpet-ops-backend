@@ -35,6 +35,7 @@ public class FabricPieceController : ControllerBase
     public async Task<ActionResult<FabricPiece>> GetByBarcode(string barcode)
     {
         var piece = await _context.FabricPieces
+            .AsNoTracking()
             .FirstOrDefaultAsync(f => f.BarcodeNo == barcode);
 
         if (piece == null)
@@ -48,13 +49,32 @@ public class FabricPieceController : ControllerBase
     [HttpGet("by-order/{orderNo}")]
     public async Task<ActionResult<List<FabricPiece>>> GetByOrderNo(string orderNo)
     {
-        var pieces = await _context.FabricPieces
-            .Where(f => f.OrderNo == orderNo)
-            .OrderBy(f => f.ListNo)
-            .ThenBy(f => f.ItemNo)
-            .ToListAsync();
-
+        var pieces = await _fabricPieceService.GetByOrderNoAsync(orderNo);
         return Ok(pieces);
+    }
+
+    [HttpGet("by-type/{cnvId:int}")]
+    public async Task<ActionResult<List<FabricPiece>>> GetByType(int cnvId)
+    {
+        if (cnvId <= 0)
+        {
+            return BadRequest(new { error = "cnvId must be a positive integer" });
+        }
+
+        var pieces = await _fabricPieceService.GetByCnvIdAsync(cnvId);
+        return Ok(pieces);
+    }
+
+    [HttpGet("orders/by-type/{cnvId:int}")]
+    public async Task<ActionResult<List<OrderSummary>>> GetOrdersByType(int cnvId)
+    {
+        if (cnvId <= 0)
+        {
+            return BadRequest(new { error = "cnvId must be a positive integer" });
+        }
+
+        var orders = await _fabricPieceService.GetOrderSummariesByCnvIdAsync(cnvId);
+        return Ok(orders);
     }
 
     [HttpGet("area-by-fabric-type")]
@@ -75,6 +95,7 @@ public class FabricPieceController : ControllerBase
     public async Task<ActionResult<List<OrderSummary>>> GetOrders()
     {
         var orders = await _context.FabricPieces
+            .AsNoTracking()
             .GroupBy(f => new { f.OrderNo, f.OrderType })
             .Select(g => new OrderSummary
             {
@@ -88,12 +109,4 @@ public class FabricPieceController : ControllerBase
 
         return Ok(orders);
     }
-}
-
-public class OrderSummary
-{
-    public string OrderNo { get; set; } = string.Empty;
-    public string OrderType { get; set; } = string.Empty;
-    public int PieceCount { get; set; }
-    public decimal TotalAreaSqm { get; set; }
 }

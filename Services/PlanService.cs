@@ -16,7 +16,7 @@ public class PlanService
 
     public async Task<LayoutPreviewResponse> GeneratePreviewAsync(LayoutPreviewRequest req)
     {
-        if (string.IsNullOrWhiteSpace(req.CnvId))
+        if (req.CnvId <= 0)
         {
             throw new ArgumentException("CnvId is required");
         }
@@ -35,8 +35,9 @@ public class PlanService
             throw new KeyNotFoundException($"Fabric type not found: {req.CnvId}");
         }
 
+        var cnvIdStr = req.CnvId.ToString();
         var allPieces = await _context.FabricPieces
-            .Where(f => f.CnvId == req.CnvId && orderList.Contains(f.OrderNo))
+            .Where(f => f.CnvId == cnvIdStr && orderList.Contains(f.OrderNo))
             .ToListAsync();
 
         if (!allPieces.Any())
@@ -68,7 +69,7 @@ public class PlanService
             throw new ArgumentException("No valid pieces with positive dimensions");
         }
 
-        var rollWidth = fabricType.RollWidth;
+        var rollWidth = fabricType.RollWidthM;
         var usableWidth = rollWidth - (2 * req.OuterSpacing);
 
         var heuristics = new List<(string Name, List<FabricPiece> Pieces)>
@@ -142,8 +143,9 @@ public class PlanService
             return (null!, existingPlanned);
         }
 
+        var cnvIdStr = req.CnvId.ToString();
         var pieces = await _context.FabricPieces
-            .Where(f => f.CnvId == req.CnvId && orderList.Contains(f.OrderNo))
+            .Where(f => f.CnvId == cnvIdStr && orderList.Contains(f.OrderNo))
             .ToListAsync();
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -241,7 +243,7 @@ public class PlanService
         }
     }
 
-    public async Task<List<PlanResponse>> GetPlansByCnvIdAsync(string cnvId)
+    public async Task<List<PlanResponse>> GetPlansByCnvIdAsync(int cnvId)
     {
         var plans = await _context.Plans
             .Include(p => p.PlanOrders)

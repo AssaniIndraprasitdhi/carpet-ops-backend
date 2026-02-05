@@ -11,16 +11,19 @@ public class FabricType
     public int Id { get; set; }
 
     [Required]
-    [Column("cnv_id")]
+    [Column("erp_code")]
     [MaxLength(50)]
-    public string CnvId { get; set; } = string.Empty;
+    public string ErpCode { get; set; } = string.Empty;
+
+    [Column("cnv_id")]
+    public int? CnvId { get; set; }
 
     [Column("cnv_desc")]
     [MaxLength(255)]
     public string? CnvDesc { get; set; }
 
-    [Column("roll_width")]
-    public decimal RollWidth { get; set; }
+    [Column("roll_width_m")]
+    public decimal RollWidthM { get; set; }
 
     [Column("thickness")]
     public decimal Thickness { get; set; }

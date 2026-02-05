@@ -19,11 +19,11 @@ public class PlanController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PlanResponse>>> GetAll([FromQuery] string? cnvId)
+    public async Task<ActionResult<List<PlanResponse>>> GetAll([FromQuery] int? cnvId)
     {
-        if (!string.IsNullOrWhiteSpace(cnvId))
+        if (cnvId.HasValue)
         {
-            var plans = await _planService.GetPlansByCnvIdAsync(cnvId);
+            var plans = await _planService.GetPlansByCnvIdAsync(cnvId.Value);
             return Ok(plans);
         }
 
@@ -48,7 +48,7 @@ public class PlanController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PlanResponse>> Create([FromBody] CreatePlanRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.CnvId))
+        if (request.CnvId <= 0)
         {
             return BadRequest(new { error = "CnvId is required" });
         }

@@ -37,7 +37,8 @@ public class PostgresContext : DbContext
 
         modelBuilder.Entity<FabricType>(entity =>
         {
-            entity.HasIndex(e => e.CnvId).IsUnique();
+            entity.HasIndex(e => e.ErpCode).IsUnique();
+            entity.HasIndex(e => e.CnvId);
         });
 
         modelBuilder.Entity<Layout>(entity =>

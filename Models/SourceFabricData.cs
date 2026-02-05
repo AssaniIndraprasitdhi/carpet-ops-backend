@@ -23,7 +23,7 @@ public class SourceFabricData
             OrderNo = ORNO,
             ListNo = ListNo,
             ItemNo = ITEM_NO,
-            CnvId = CnvID,
+            CnvId = CnvID ?? string.Empty,
             CnvDesc = CnvDesc,
             AsPlan = ASPLAN,
             Width = Width,

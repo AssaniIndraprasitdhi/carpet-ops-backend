@@ -3,24 +3,25 @@ namespace CarpetOpsSystem.DTOs;
 public class FabricTypeDto
 {
     public int Id { get; set; }
-    public string CnvId { get; set; } = string.Empty;
+    public string ErpCode { get; set; } = string.Empty;
+    public int? CnvId { get; set; }
     public string? CnvDesc { get; set; }
     public decimal RollWidthM { get; set; }
+    public decimal Thickness { get; set; }
 }
 
 public class OrderDto
 {
     public string OrderNo { get; set; } = string.Empty;
     public string OrderType { get; set; } = string.Empty;
-    public string CnvId { get; set; } = string.Empty;
-    public string? CnvDesc { get; set; }
+    public int CnvId { get; set; }
     public int PieceCount { get; set; }
     public decimal TotalAreaSqm { get; set; }
 }
 
 public class LayoutPreviewRequest
 {
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
     public List<string> OrderNos { get; set; } = new();
     public decimal OuterSpacing { get; set; } = 0.3m;
     public decimal InnerSpacing { get; set; } = 0.15m;
@@ -28,7 +29,7 @@ public class LayoutPreviewRequest
 
 public class LayoutPreviewResponse
 {
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
     public decimal RollWidthM { get; set; }
     public decimal OuterSpacing { get; set; }
     public decimal InnerSpacing { get; set; }
@@ -62,7 +63,7 @@ public class ExcludedPiece
 
 public class CreatePlanRequest
 {
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
     public List<string> OrderNos { get; set; } = new();
     public decimal RollWidthM { get; set; }
     public decimal OuterSpacing { get; set; }
@@ -79,7 +80,7 @@ public class CreatePlanRequest
 public class PlanResponse
 {
     public int Id { get; set; }
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
     public decimal RollWidthM { get; set; }
     public decimal OuterSpacing { get; set; }
     public decimal InnerSpacing { get; set; }

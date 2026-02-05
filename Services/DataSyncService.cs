@@ -59,7 +59,7 @@ public class DataSyncService
                         existing.OrderNo = source.ORNO;
                         existing.ListNo = source.ListNo;
                         existing.ItemNo = source.ITEM_NO;
-                        existing.CnvId = source.CnvID;
+                        existing.CnvId = source.CnvID ?? string.Empty;
                         existing.CnvDesc = source.CnvDesc;
                         existing.AsPlan = source.ASPLAN;
                         existing.Width = source.Width;
@@ -147,7 +147,7 @@ public class DataSyncService
                         existing.OrderNo = source.ORNO;
                         existing.ListNo = source.ListNo;
                         existing.ItemNo = source.ITEM_NO;
-                        existing.CnvId = source.CnvID;
+                        existing.CnvId = source.CnvID ?? string.Empty;
                         existing.CnvDesc = source.CnvDesc;
                         existing.AsPlan = source.ASPLAN;
                         existing.Width = source.Width;

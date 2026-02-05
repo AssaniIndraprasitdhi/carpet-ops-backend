@@ -10,10 +10,8 @@ public class Plan
     [Column("id")]
     public int Id { get; set; }
 
-    [Required]
     [Column("cnv_id")]
-    [MaxLength(50)]
-    public string CnvId { get; set; } = string.Empty;
+    public int CnvId { get; set; }
 
     [Column("roll_width_m")]
     public decimal RollWidthM { get; set; }

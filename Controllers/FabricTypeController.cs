@@ -20,30 +20,34 @@ public class FabricTypeController : ControllerBase
     public async Task<ActionResult<List<FabricTypeDto>>> GetAll()
     {
         var types = await _context.FabricTypes
-            .OrderBy(t => t.CnvId)
+            .OrderBy(t => t.ErpCode)
             .Select(t => new FabricTypeDto
             {
                 Id = t.Id,
+                ErpCode = t.ErpCode,
                 CnvId = t.CnvId,
                 CnvDesc = t.CnvDesc,
-                RollWidthM = t.RollWidth
+                RollWidthM = t.RollWidthM,
+                Thickness = t.Thickness
             })
             .ToListAsync();
 
         return Ok(types);
     }
 
-    [HttpGet("{cnvId}")]
-    public async Task<ActionResult<FabricTypeDto>> GetByCnvId(string cnvId)
+    [HttpGet("{erpCode}")]
+    public async Task<ActionResult<FabricTypeDto>> GetByErpCode(string erpCode)
     {
         var type = await _context.FabricTypes
-            .Where(t => t.CnvId == cnvId)
+            .Where(t => t.ErpCode == erpCode)
             .Select(t => new FabricTypeDto
             {
                 Id = t.Id,
+                ErpCode = t.ErpCode,
                 CnvId = t.CnvId,
                 CnvDesc = t.CnvDesc,
-                RollWidthM = t.RollWidth
+                RollWidthM = t.RollWidthM,
+                Thickness = t.Thickness
             })
             .FirstOrDefaultAsync();
 
